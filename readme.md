@@ -181,13 +181,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ```
 
-## 📈 Performance
-
-- **Load Time:** < 2 seconds
-- **Data Refresh:** 30 seconds during market hours
-- **Mobile Performance:** Optimized for 3G networks
-- **Browser Support:** Chrome, Firefox, Safari, Edge
-
 ## 🤝 Contributing
 
 We welcome contributions! Please follow these steps:
