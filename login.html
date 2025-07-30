@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Nepali Trader</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --hover: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: var(--surface);
+            border-radius: 16px;
+            overflow: hidden;
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+        }
+
+        .auth-header {
+            background: var(--primary);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-1px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .logo i {
+            color: var(--accent);
+            font-size: 2.2rem;
+        }
+
+        .auth-subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 4px;
+            margin-top: 20px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 8px 16px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .auth-tab.active {
+            background: var(--surface);
+            color: var(--primary);
+        }
+
+        .auth-form {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .input-container {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+            background: var(--surface);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 16px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.2s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--accent);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            margin: 0;
+        }
+
+        .forgot-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .auth-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .auth-btn:active {
+            transform: translateY(0);
+        }
+
+        .auth-btn:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 24px 0;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--border);
+            z-index: 1;
+        }
+
+        .divider span {
+            background: var(--surface);
+            padding: 0 16px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .social-btn:hover {
+            background: var(--hover);
+            border-color: var(--accent);
+        }
+
+        .google-btn {
+            color: #ea4335;
+        }
+
+        .facebook-btn {
+            color: #1877f2;
+        }
+
+        .auth-switch {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .auth-switch a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        .features-list {
+            background: var(--background);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .features-list h4 {
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        .features-list ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .features-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .features-list i {
+            color: var(--success);
+            font-size: 12px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 480px) {
+            .auth-container {
+                margin: 10px;
+                max-width: none;
+            }
+
+            .auth-header {
+                padding: 30px 20px;
+            }
+
+            .auth-form {
+                padding: 30px 20px;
+            }
+
+            .social-login {
+                flex-direction: column;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .logo i {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Animation for form switching */
+        .form-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-form {
+            transition: transform 0.3s ease;
+        }
+
+        .auth-form.slide-out {
+            transform: translateX(-100%);
+        }
+
+        .auth-form.slide-in {
+            transform: translateX(0);
+        }
+    </style>
+</head>
+<body>
+<div class="auth-container">
+    <div class="auth-header">
+        <a href="index.html" class="back-btn" title="Back to Market">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+
+        <div class="logo">
+            <i class="fas fa-chart-line"></i>
+            <span>Nepali Trader</span>
+        </div>
+        <p class="auth-subtitle">Your gateway to NEPSE trading</p>
+
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchTab('login')" id="loginTab">
+                Sign In
+            </button>
+            <button class="auth-tab" onclick="switchTab('register')" id="registerTab">
+                Create Account
+            </button>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <!-- Login Form -->
+        <div class="auth-form" id="loginForm">
+            <div class="alert alert-error" id="loginAlert"></div>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" class="form-input" placeholder="Enter your email" required name="email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-input" placeholder="Enter your password" required name="password" id="loginPassword">
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('loginPassword', this)"></i>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" name="remember">
+                        <span>Remember me</span>
+                    </label>
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+
+                <button type="submit" class="auth-btn" id="loginBtn">
+                    <span>Sign In</span>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>or continue with</span>
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn google-btn" onclick="socialLogin('google')">
+                    <i class="fab fa-google"></i>
+                    <span>Google</span>
+                </button>
+                <button class="social-btn facebook-btn" onclick="socialLogin('facebook')">
+                    <i class="fab fa-facebook-f"></i>
+                    <span>Facebook</span>
+                </button>
+            </div>
+
+            <div class="features-list">
+                <h4>Why join Nepali Trader?</h4>
+                <ul>
+                    <li><i class="fas fa-check"></i> Real-time NEPSE market data</li>
+                    <li><i class="fas fa-check"></i> Personal portfolio tracking</li>
+                    <li><i class="fas fa-check"></i> Custom watchlists</li>
+                    <li><i class="fas fa-check"></i> Market analysis tools</li>
+                    <li><i class="fas fa-check"></i> Price alerts & notifications</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Register Form -->
+        <div class="auth-form" id="registerForm" style="display: none;">
+            <div class="alert alert-error" id="registerAlert"></div>
+
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <div class="input-container">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" class="form-input" placeholder="Enter your full name" required name="fullName">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon"></i>
+                        <input type="email" class="form-input" placeholder="Enter your email" required name="email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-input" placeholder="Create a password" required name="password" id="registerPassword" minlength="6">
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('registerPassword', this)"></i>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-input" placeholder="Confirm your password" required name="confirmPassword" id="confirmPassword" minlength="6">
+                        <i class="fas fa-eye password-toggle" onclick="togglePassword('confirmPassword', this)"></i>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <label class="remember-me">
+                        <input type="checkbox" required>
+                        <span>I agree to the <a href="#" class="forgot-link">Terms & Conditions</a></span>
+                    </label>
+                </div>
+
+                <button type="submit" class="auth-btn" id="registerBtn">
+                    <span>Create Account</span>
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>or sign up with</span>
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn google-btn" onclick="socialLogin('google')">
+                    <i class="fab fa-google"></i>
+                    <span>Google</span>
+                </button>
+                <button class="social-btn facebook-btn" onclick="socialLogin('facebook')">
+                    <i class="fab fa-facebook-f"></i>
+                    <span>Facebook</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentTab = 'login';
+
+    function switchTab(tab) {
+        currentTab = tab;
+
+        // Update tab buttons
+        document.getElementById('loginTab').classList.toggle('active', tab === 'login');
+        document.getElementById('registerTab').classList.toggle('active', tab === 'register');
+
+        // Show/hide forms
+        document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+        document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+
+        // Clear alerts
+        hideAlert('loginAlert');
+        hideAlert('registerAlert');
+    }
+
+    function togglePassword(inputId, toggleIcon) {
+        const input = document.getElementById(inputId);
+        const isPassword = input.type === 'password';
+
+        input.type = isPassword ? 'text' : 'password';
+        toggleIcon.className = isPassword ? 'fas fa-eye-slash password-toggle' : 'fas fa-eye password-toggle';
+    }
+
+    function showAlert(alertId, message, type = 'error') {
+        const alert = document.getElementById(alertId);
+        alert.className = `alert alert-${type}`;
+        alert.textContent = message;
+        alert.style.display = 'block';
+    }
+
+    function hideAlert(alertId) {
+        const alert = document.getElementById(alertId);
+        alert.style.display = 'none';
+    }
+
+    function setButtonLoading(buttonId, loading) {
+        const button = document.getElementById(buttonId);
+        const span = button.querySelector('span');
+
+        if (loading) {
+            button.disabled = true;
+            button.innerHTML = '<div class="loading-spinner"></div><span>Please wait...</span>';
+        } else {
+            button.disabled = false;
+            button.innerHTML = `<span>${buttonId === 'loginBtn' ? 'Sign In' : 'Create Account'}</span>`;
+        }
+    }
+
+    async function handleLogin(event) {
+        event.preventDefault();
+        hideAlert('loginAlert');
+
+        const formData = new FormData(event.target);
+        const email = formData.get('email');
+        const password = formData.get('password');
+        const remember = formData.get('remember');
+
+        // Basic validation
+        if (!email || !password) {
+            showAlert('loginAlert', 'Please fill in all required fields.');
+            return;
+        }
+
+        setButtonLoading('loginBtn', true);
+
+        try {
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // For demo purposes, accept any email/password combination
+            const user = {
+                name: email.split('@')[0],
+                email: email,
+                loginTime: new Date().toISOString()
+            };
+
+            // Store user data
+            localStorage.setItem('nepali_trader_user', JSON.stringify(user));
+
+            if (remember) {
+                localStorage.setItem('nepali_trader_remember', 'true');
+            }
+
+            // Redirect to main app
+            showAlert('loginAlert', 'Login successful! Redirecting...', 'success');
+
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+
+        } catch (error) {
+            showAlert('loginAlert', 'Login failed. Please try again.');
+        } finally {
+            setButtonLoading('loginBtn', false);
+        }
+    }
+
+    async function handleRegister(event) {
+        event.preventDefault();
+        hideAlert('registerAlert');
+
+        const formData = new FormData(event.target);
+        const fullName = formData.get('fullName');
+        const email = formData.get('email');
+        const password = formData.get('password');
+        const confirmPassword = formData.get('confirmPassword');
+
+        // Validation
+        if (!fullName || !email || !password || !confirmPassword) {
+            showAlert('registerAlert', 'Please fill in all required fields.');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            showAlert('registerAlert', 'Passwords do not match.');
+            return;
+        }
+
+        if (password.length < 6) {
+            showAlert('registerAlert', 'Password must be at least 6 characters long.');
+            return;
+        }
+
+        setButtonLoading('registerBtn', true);
+
+        try {
+            // Simulate API call
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            const user = {
+                name: fullName,
+                email: email,
+                registrationTime: new Date().toISOString()
+            };
+
+            // Store user data
+            localStorage.setItem('nepali_trader_user', JSON.stringify(user));
+
+            // Show success and redirect
+            showAlert('registerAlert', 'Account created successfully! Redirecting...', 'success');
+
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+
+        } catch (error) {
+            showAlert('registerAlert', 'Registration failed. Please try again.');
+        } finally {
+            setButtonLoading('registerBtn', false);
+        }
+    }
+
+    function socialLogin(provider) {
+        showAlert(currentTab + 'Alert', `${provider} login will be available soon!`);
+    }
+
+    // Auto-fill demo credentials on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check if user is already logged in
+        const existingUser = localStorage.getItem('nepali_trader_user');
+        if (existingUser) {
+            window.location.href = 'index.html';
+            return;
+        }
+
+        // Auto-fill demo credentials for easier testing
+        setTimeout(() => {
+            const emailInput = document.querySelector('#loginForm input[name="email"]');
+            const passwordInput = document.querySelector('#loginForm input[name="password"]');
+
+            if (emailInput && passwordInput) {
+                emailInput.value = 'demo@nepalitrader.com';
+                passwordInput.value = 'demo123';
+            }
+        }, 500);
+    });
+
+    // Handle URL parameters for direct registration
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('action') === 'register') {
+        switchTab('register');
+    }
+</script>
+</body>
+</html>

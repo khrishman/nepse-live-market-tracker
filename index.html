@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEPSE - Nepali Trader</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --hover: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            color: var(--accent);
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-ghost:hover {
+            background: var(--hover);
+            color: var(--text-primary);
+        }
+
+        .user-menu {
+            position: relative;
+            display: none;
+        }
+
+        .user-menu.logged-in {
+            display: block;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            min-width: 200px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            text-decoration: none;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dropdown-item:hover {
+            background: var(--hover);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Market Status */
+        .market-banner {
+            background: var(--primary);
+            color: white;
+            padding: 12px 0;
+        }
+
+        .market-info {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .market-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.closed {
+            background: var(--danger);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .nepse-index {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+        }
+
+        .index-value {
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .index-change {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .index-change.positive {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .index-change.negative {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1400px;
+            margin: 24px auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 24px;
+        }
+
+        /* Controls */
+        .controls {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            grid-column: 1 / -1;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .filter-tabs {
+            display: flex;
+            background: var(--background);
+            border-radius: 6px;
+            padding: 2px;
+        }
+
+        .filter-tab {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .filter-tab.active {
+            background: var(--surface);
+            color: var(--accent);
+        }
+
+        /* Content Area */
+        .content-area {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .content-header {
+            background: var(--primary);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .stock-count {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 70vh;
+        }
+
+        .stocks-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .stocks-table th {
+            background: var(--background);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .stocks-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .stock-row {
+            transition: background-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .stock-row:hover {
+            background: var(--hover);
+        }
+
+        .stock-row.gainer {
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .stock-row.loser {
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .stock-row.unchanged {
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .symbol-cell {
+            font-weight: 700;
+            color: var(--primary);
+            position: relative;
+        }
+
+        .watchlist-btn {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+
+        .stock-row:hover .watchlist-btn {
+            opacity: 1;
+        }
+
+        .watchlist-btn.active {
+            color: var(--warning);
+            opacity: 1;
+        }
+
+        .change-positive {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .change-negative {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .change-neutral {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .widget {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .widget-header {
+            padding: 16px 20px;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .widget-content {
+            padding: 16px;
+        }
+
+        .stock-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stock-item:last-child {
+            border-bottom: none;
+        }
+
+        .stock-info h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .stock-price {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .stock-change {
+            text-align: right;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* Watchlist */
+        .watchlist-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        .watchlist-empty i {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Loading & Messages */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message {
+            padding: 12px 20px;
+            margin: 16px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .message-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .message-info {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        /* Portfolio Summary */
+        .portfolio-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .summary-card {
+            background: var(--background);
+            padding: 16px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .main-container {
+                grid-template-columns: 1fr;
+                padding: 0 16px;
+                gap: 16px;
+            }
+
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .market-info {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .sidebar {
+                order: -1;
+            }
+
+            .stocks-table th,
+            .stocks-table td {
+                padding: 8px;
+                font-size: 13px;
+            }
+        }
+
+        /* Login Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .modal-header {
+            padding: 24px 24px 0;
+            text-align: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .modal-body {
+            padding: 0 24px 24px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: var(--hover);
+        }
+
+        .auth-links {
+            text-align: center;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .auth-links a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .auth-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="nav-container">
+        <a href="#" class="logo">
+            <i class="fas fa-chart-line"></i>
+            <span>Nepali Trader</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="#" class="nav-link active">Market</a>
+            <a href="#" class="nav-link">Portfolio</a>
+            <a href="#" class="nav-link">Analysis</a>
+            <a href="#" class="nav-link">News</a>
+            <a href="#" class="nav-link">Learn</a>
+        </div>
+
+        <div class="nav-actions">
+            <div id="guestActions">
+                <button class="btn btn-outline" onclick="showLogin()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Login
+                </button>
+            </div>
+
+            <div class="user-menu" id="userMenu">
+                <div class="user-avatar" onclick="toggleDropdown()">
+                    <span id="userInitials">U</span>
+                </div>
+                <div class="dropdown" id="userDropdown">
+                    <a href="#" class="dropdown-item" onclick="showPortfolio()">
+                        <i class="fas fa-chart-pie"></i> Portfolio
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="showWatchlist()">
+                        <i class="fas fa-star"></i> Watchlist
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="showSettings()">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                    <a href="#" class="dropdown-item" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </a>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="fetchData()">
+                <i class="fas fa-sync-alt"></i>
+                Refresh
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Market Status -->
+<div class="market-banner">
+    <div class="market-info">
+        <div class="market-status">
+            <div class="status-dot" id="statusDot"></div>
+            <span id="marketStatusText">Market Status</span>
+            <span id="currentTime"></span>
+        </div>
+
+        <div class="nepse-index">
+<!--            <span>NEPSE:</span>-->
+<!--            <span class="index-value" id="nepseIndex">Loading...</span>-->
+            <span class="index-change" id="nepseChange"></span>
+        </div>
+    </div>
+</div>
+
+<!-- Main Container -->
+<div class="main-container">
+    <!-- Controls -->
+    <div class="controls">
+        <div class="controls-row">
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search stocks...">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="setFilter('all', event)">All</button>
+                <button class="filter-tab" onclick="setFilter('gainers', event)">Gainers</button>
+                <button class="filter-tab" onclick="setFilter('losers', event)">Losers</button>
+            </div>
+
+            <div style="display: flex; gap: 8px;">
+                <button class="btn btn-ghost" onclick="exportData()">
+                    <i class="fas fa-download"></i>
+                    Export
+                </button>
+                <button class="btn btn-ghost" onclick="testConnection()">
+                    <i class="fas fa-cog"></i>
+                    Test
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-area">
+        <div class="content-header">
+            <h2 class="content-title">Live Market Data</h2>
+            <div class="stock-count" id="stockCount">0 Stocks</div>
+        </div>
+
+        <div id="messageContainer"></div>
+
+        <div id="loadingIndicator" class="loading">
+            <div class="spinner"></div>
+            <div>Fetching market data...</div>
+        </div>
+
+        <div class="table-container" id="tableContainer" style="display: none;">
+            <table class="stocks-table">
+                <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>LTP</th>
+                    <th>Change</th>
+                    <th>Open</th>
+                    <th>High</th>
+                    <th>Low</th>
+                    <th>Volume</th>
+                    <th>Time</th>
+                </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div id="noDataMessage" class="loading" style="display: none;">
+            <i class="fas fa-chart-line" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.3;"></i>
+            <h3>No market data available</h3>
+            <p>Market may be closed or experiencing connection issues.</p>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Watchlist -->
+        <div class="widget" id="watchlistWidget" style="display: none;">
+            <div class="widget-header">
+                <i class="fas fa-star"></i>
+                My Watchlist
+            </div>
+            <div class="widget-content" id="watchlistContent">
+                <div class="watchlist-empty">
+                    <i class="fas fa-star"></i>
+                    <h4>No stocks in watchlist</h4>
+                    <p>Click the star icon next to any stock to add it to your watchlist.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Portfolio Summary -->
+        <div class="widget" id="portfolioWidget" style="display: none;">
+            <div class="widget-header">
+                <i class="fas fa-chart-pie"></i>
+                Portfolio
+            </div>
+            <div class="widget-content">
+                <div class="portfolio-summary">
+                    <div class="summary-card">
+                        <div class="summary-value" id="portfolioValue">Rs. 0</div>
+                        <div class="summary-label">Total Value</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value" id="portfolioChange">+0.00%</div>
+                        <div class="summary-label">Today's Change</div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="showPortfolio()">
+                    View Full Portfolio
+                </button>
+            </div>
+        </div>
+
+        <!-- Top Gainers -->
+        <div class="widget">
+            <div class="widget-header">
+                <i class="fas fa-arrow-up"></i>
+                Top Gainers
+            </div>
+            <div class="widget-content" id="topGainers">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Losers -->
+        <div class="widget">
+            <div class="widget-header">
+                <i class="fas fa-arrow-down"></i>
+                Top Losers
+            </div>
+            <div class="widget-content" id="topLosers">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="loginModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <div class="modal-header">
+            <h2 class="modal-title">Welcome Back</h2>
+            <p class="modal-subtitle">Sign in to access your portfolio and watchlist</p>
+        </div>
+        <div class="modal-body">
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 16px;">
+                    Sign In
+                </button>
+                <div class="auth-links">
+                    <span>Don't have an account? </span>
+                    <a href="#" onclick="showRegister()">Create one</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal-overlay" id="registerModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <div class="modal-header">
+            <h2 class="modal-title">Create Account</h2>
+            <p class="modal-subtitle">Join Nepali Trader to track your investments</p>
+        </div>
+        <div class="modal-body">
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" placeholder="Enter your full name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-input" placeholder="Create a password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-bottom: 16px;">
+                    Create Account
+                </button>
+                <div class="auth-links">
+                    <span>Already have an account? </span>
+                    <a href="#" onclick="showLogin()">Sign in</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let marketData = [];
+    let currentFilter = 'all';
+    let searchTerm = '';
+    let isLoggedIn = false;
+    let userWatchlist = [];
+    let userPortfolio = [];
+
+    // User Management
+    function initUser() {
+        const userData = localStorage.getItem('nepali_trader_user');
+        if (userData) {
+            const user = JSON.parse(userData);
+            login(user);
+        }
+    }
+
+    function login(user) {
+        isLoggedIn = true;
+        document.getElementById('guestActions').style.display = 'none';
+        document.getElementById('userMenu').classList.add('logged-in');
+        document.getElementById('userInitials').textContent = user.name.charAt(0).toUpperCase();
+        document.getElementById('watchlistWidget').style.display = 'block';
+        document.getElementById('portfolioWidget').style.display = 'block';
+
+        // Load user data
+        loadWatchlist();
+        loadPortfolio();
+    }
+
+    function logout() {
+        isLoggedIn = false;
+        localStorage.removeItem('nepali_trader_user');
+        localStorage.removeItem('nepali_trader_watchlist');
+        localStorage.removeItem('nepali_trader_portfolio');
+
+        document.getElementById('guestActions').style.display = 'block';
+        document.getElementById('userMenu').classList.remove('logged-in');
+        document.getElementById('watchlistWidget').style.display = 'none';
+        document.getElementById('portfolioWidget').style.display = 'none';
+
+        userWatchlist = [];
+        userPortfolio = [];
+        displayData(); // Refresh to remove watchlist indicators
+    }
+
+    function loadWatchlist() {
+        const saved = localStorage.getItem('nepali_trader_watchlist');
+        userWatchlist = saved ? JSON.parse(saved) : [];
+        updateWatchlistDisplay();
+    }
+
+    function loadPortfolio() {
+        const saved = localStorage.getItem('nepali_trader_portfolio');
+        userPortfolio = saved ? JSON.parse(saved) : [];
+        updatePortfolioDisplay();
+    }
+
+    function toggleWatchlist(symbol) {
+        if (!isLoggedIn) {
+            showMessage('Please login to use watchlist feature', 'error');
+            return;
+        }
+
+        const index = userWatchlist.indexOf(symbol);
+        if (index > -1) {
+            userWatchlist.splice(index, 1);
+            showMessage(`${symbol} removed from watchlist`, 'info');
+        } else {
+            userWatchlist.push(symbol);
+            showMessage(`${symbol} added to watchlist`, 'info');
+        }
+
+        localStorage.setItem('nepali_trader_watchlist', JSON.stringify(userWatchlist));
+        updateWatchlistDisplay();
+        displayData(); // Refresh to update star indicators
+    }
+
+    function updateWatchlistDisplay() {
+        const content = document.getElementById('watchlistContent');
+
+        if (userWatchlist.length === 0) {
+            content.innerHTML = `
+                    <div class="watchlist-empty">
+                        <i class="fas fa-star"></i>
+                        <h4>No stocks in watchlist</h4>
+                        <p>Click the star icon next to any stock to add it to your watchlist.</p>
+                    </div>
+                `;
+            return;
+        }
+
+        const watchlistStocks = marketData.filter(stock => userWatchlist.includes(stock.symbol));
+
+        content.innerHTML = watchlistStocks.map(stock => {
+            const changeText = stock.change.replace('%', '').replace('+', '');
+            const change = parseFloat(changeText);
+            const changeClass = change > 0 ? 'change-positive' : change < 0 ? 'change-negative' : 'change-neutral';
+
+            return `
+                    <div class="stock-item">
+                        <div class="stock-info">
+                            <h4>${stock.symbol}</h4>
+                            <div class="stock-price">Rs. ${stock.ltp}</div>
+                        </div>
+                        <div class="stock-change ${changeClass}">
+                            ${stock.change}
+                        </div>
+                    </div>
+                `;
+        }).join('');
+    }
+
+    function updatePortfolioDisplay() {
+        // Simulate portfolio calculation
+        const totalValue = userPortfolio.reduce((sum, item) => sum + (item.quantity * item.avgPrice), 0);
+        const todayChange = Math.random() * 10 - 5; // Simulate change
+
+        document.getElementById('portfolioValue').textContent = `Rs. ${totalValue.toLocaleString()}`;
+        document.getElementById('portfolioChange').textContent = `${todayChange >= 0 ? '+' : ''}${todayChange.toFixed(2)}%`;
+        document.getElementById('portfolioChange').className = `summary-value ${todayChange >= 0 ? 'change-positive' : 'change-negative'}`;
+    }
+
+    // Nepal timezone utilities
+    function getNepalTime() {
+        const now = new Date();
+        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const nepal = new Date(utc + (5.75 * 3600000));
+        return nepal;
+    }
+
+    function updateClock() {
+        const nepal = getNepalTime();
+        const timeString = nepal.toLocaleString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        document.getElementById('currentTime').textContent = timeString + ' NST';
+    }
+
+    function checkMarketStatus() {
+        const nepal = getNepalTime();
+        const day = nepal.getDay();
+        const hour = nepal.getHours();
+
+        const isWeekday = [0, 1, 2, 3, 4].includes(day);
+        const isMarketHours = hour >= 11 && hour < 15;
+
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('marketStatusText');
+
+        if (isWeekday && isMarketHours) {
+            statusDot.className = 'status-dot';
+            statusText.textContent = 'Market Open';
+        } else {
+            statusDot.className = 'status-dot closed';
+            statusText.textContent = 'Market Closed';
+        }
+    }
+
+    function showMessage(message, type = 'info') {
+        const container = document.getElementById('messageContainer');
+        const className = type === 'error' ? 'message-error' : 'message-info';
+        container.innerHTML = `<div class="message ${className}">${message}</div>`;
+
+        setTimeout(() => {
+            container.innerHTML = '';
+        }, 5000);
+    }
+
+    async function fetchData() {
+        document.getElementById('loadingIndicator').style.display = 'flex';
+        document.getElementById('tableContainer').style.display = 'none';
+        document.getElementById('noDataMessage').style.display = 'none';
+        document.getElementById('messageContainer').innerHTML = '';
+
+        try {
+            const response = await fetch('nepse_scraper.php');
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+
+            if (data.success && data.data && data.data.length > 0) {
+                marketData = data.data;
+                updateNepseIndex(data.nepse_index);
+                displayData();
+                updateSidebar();
+
+                if (data.note) {
+                    showMessage(data.note, 'info');
+                }
+            } else {
+                document.getElementById('noDataMessage').style.display = 'flex';
+                if (data.error) {
+                    showMessage('Error: ' + data.error, 'error');
+                }
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+            document.getElementById('noDataMessage').style.display = 'flex';
+            showMessage('Connection failed: ' + error.message, 'error');
+        }
+
+        document.getElementById('loadingIndicator').style.display = 'none';
+    }
+
+    function updateNepseIndex(indexData) {
+        if (!indexData) return;
+
+        document.getElementById('nepseIndex').textContent = indexData.value.toFixed(2);
+
+        const changeElement = document.getElementById('nepseChange');
+        const changeText = (indexData.change >= 0 ? '+' : '') + indexData.change.toFixed(2);
+        changeElement.textContent = `${changeText} (${indexData.change_percent})`;
+        changeElement.className = `index-change ${indexData.change >= 0 ? 'positive' : 'negative'}`;
+    }
+
+    function setFilter(filter, event) {
+        currentFilter = filter;
+
+        document.querySelectorAll('.filter-tab').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+
+        displayData();
+    }
+
+    function filterData() {
+        let filtered = [...marketData];
+
+        if (searchTerm) {
+            filtered = filtered.filter(stock =>
+                stock.symbol.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        }
+
+        if (currentFilter === 'gainers') {
+            filtered = filtered.filter(stock => {
+                const changeText = stock.change.replace('%', '').replace('+', '');
+                return parseFloat(changeText) > 0;
+            }).sort((a, b) => {
+                const aChange = parseFloat(a.change.replace('%', '').replace('+', ''));
+                const bChange = parseFloat(b.change.replace('%', '').replace('+', ''));
+                return bChange - aChange;
+            });
+        } else if (currentFilter === 'losers') {
+            filtered = filtered.filter(stock => {
+                const changeText = stock.change.replace('%', '').replace('+', '');
+                return parseFloat(changeText) < 0;
+            }).sort((a, b) => {
+                const aChange = parseFloat(a.change.replace('%', '').replace('+', ''));
+                const bChange = parseFloat(b.change.replace('%', '').replace('+', ''));
+                return aChange - bChange;
+            });
+        }
+
+        return filtered;
+    }
+
+    function displayData() {
+        const filtered = filterData();
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+
+        document.getElementById('stockCount').textContent = `${filtered.length} Stocks`;
+
+        if (filtered.length === 0) {
+            document.getElementById('noDataMessage').style.display = 'flex';
+            document.getElementById('tableContainer').style.display = 'none';
+            return;
+        }
+
+        filtered.forEach(stock => {
+            const changeText = stock.change.replace('%', '').replace('+', '');
+            const change = parseFloat(changeText);
+
+            let changeClass, rowClass;
+            if (change > 0) {
+                changeClass = 'change-positive';
+                rowClass = 'gainer';
+            } else if (change < 0) {
+                changeClass = 'change-negative';
+                rowClass = 'loser';
+            } else {
+                changeClass = 'change-neutral';
+                rowClass = 'unchanged';
+            }
+
+            const isInWatchlist = userWatchlist.includes(stock.symbol);
+            const watchlistIcon = isInWatchlist ? 'fas fa-star' : 'far fa-star';
+            const watchlistClass = isInWatchlist ? 'active' : '';
+
+            const row = document.createElement('tr');
+            row.className = `stock-row ${rowClass}`;
+            row.innerHTML = `
+                    <td class="symbol-cell">
+                        ${stock.symbol}
+                        <button class="watchlist-btn ${watchlistClass}" onclick="toggleWatchlist('${stock.symbol}')">
+                            <i class="${watchlistIcon}"></i>
+                        </button>
+                    </td>
+                    <td>Rs. ${stock.ltp}</td>
+                    <td class="${changeClass}">${stock.change}</td>
+                    <td>Rs. ${stock.open}</td>
+                    <td>Rs. ${stock.high}</td>
+                    <td>Rs. ${stock.low}</td>
+                    <td>${stock.qty}</td>
+                    <td>${stock.time}</td>
+                `;
+            tbody.appendChild(row);
+        });
+
+        document.getElementById('tableContainer').style.display = 'block';
+        document.getElementById('noDataMessage').style.display = 'none';
+    }
+
+    function updateSidebar() {
+        updateTopGainers();
+        updateTopLosers();
+        if (isLoggedIn) {
+            updateWatchlistDisplay();
+            updatePortfolioDisplay();
+        }
+    }
+
+    function updateTopGainers() {
+        const gainers = marketData
+            .filter(stock => {
+                const changeText = stock.change.replace('%', '').replace('+', '');
+                return parseFloat(changeText) > 0;
+            })
+            .sort((a, b) => {
+                const aChange = parseFloat(a.change.replace('%', '').replace('+', ''));
+                const bChange = parseFloat(b.change.replace('%', '').replace('+', ''));
+                return bChange - aChange;
+            })
+            .slice(0, 10);
+
+        const container = document.getElementById('topGainers');
+
+        if (gainers.length === 0) {
+            container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No gainers found</div>';
+            return;
+        }
+
+        container.innerHTML = gainers.map(stock => `
+                <div class="stock-item">
+                    <div class="stock-info">
+                        <h4>${stock.symbol}</h4>
+                        <div class="stock-price">Rs. ${stock.ltp}</div>
+                    </div>
+                    <div class="stock-change change-positive">
+                        ${stock.change}
+                    </div>
+                </div>
+            `).join('');
+    }
+
+    function updateTopLosers() {
+        const losers = marketData
+            .filter(stock => {
+                const changeText = stock.change.replace('%', '').replace('+', '');
+                return parseFloat(changeText) < 0;
+            })
+            .sort((a, b) => {
+                const aChange = parseFloat(a.change.replace('%', '').replace('+', ''));
+                const bChange = parseFloat(b.change.replace('%', '').replace('+', ''));
+                return aChange - bChange;
+            })
+            .slice(0, 10);
+
+        const container = document.getElementById('topLosers');
+
+        if (losers.length === 0) {
+            container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">No losers found</div>';
+            return;
+        }
+
+        container.innerHTML = losers.map(stock => `
+                <div class="stock-item">
+                    <div class="stock-info">
+                        <h4>${stock.symbol}</h4>
+                        <div class="stock-price">Rs. ${stock.ltp}</div>
+                    </div>
+                    <div class="stock-change change-negative">
+                        ${stock.change}
+                    </div>
+                </div>
+            `).join('');
+    }
+
+    async function testConnection() {
+        try {
+            const response = await fetch('nepse_scraper.php?test=1');
+            const data = await response.json();
+
+            let message = `<strong>System Status:</strong><br>`;
+            message += `Status: ${data.status}<br>`;
+            message += `Time: ${data.timestamp}<br>`;
+            message += `Timezone: ${data.timezone}<br>`;
+            message += `cURL: ${data.curl_available}<br>`;
+            message += `PHP Version: ${data.php_version}`;
+
+            showMessage(message, 'info');
+        } catch (error) {
+            showMessage('Test failed: ' + error.message, 'error');
+        }
+    }
+
+    function exportData() {
+        if (marketData.length === 0) {
+            showMessage('No data available for export', 'error');
+            return;
+        }
+
+        window.open('nepse_scraper.php?action=export', '_blank');
+    }
+
+    // Modal functions
+    function showLogin() {
+        closeModal();
+        document.getElementById('loginModal').classList.add('show');
+    }
+
+    function showRegister() {
+        closeModal();
+        document.getElementById('registerModal').classList.add('show');
+    }
+
+    function closeModal() {
+        document.getElementById('loginModal').classList.remove('show');
+        document.getElementById('registerModal').classList.remove('show');
+    }
+
+    function handleLogin(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const email = formData.get('email') || event.target.querySelector('input[type="email"]').value;
+        const password = formData.get('password') || event.target.querySelector('input[type="password"]').value;
+
+        // Simulate login
+        const user = {
+            name: email.split('@')[0],
+            email: email
+        };
+
+        localStorage.setItem('nepali_trader_user', JSON.stringify(user));
+        login(user);
+        closeModal();
+        showMessage('Welcome back! You can now use portfolio and watchlist features.', 'info');
+    }
+
+    function handleRegister(event) {
+        event.preventDefault();
+        const inputs = event.target.querySelectorAll('input');
+        const name = inputs[0].value;
+        const email = inputs[1].value;
+        const password = inputs[2].value;
+
+        // Simulate registration
+        const user = {
+            name: name,
+            email: email
+        };
+
+        localStorage.setItem('nepali_trader_user', JSON.stringify(user));
+        login(user);
+        closeModal();
+        showMessage('Account created successfully! Welcome to Nepali Trader.', 'info');
+    }
+
+    function toggleDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        dropdown.classList.toggle('show');
+    }
+
+    function showPortfolio() {
+        showMessage('Portfolio management feature coming soon!', 'info');
+    }
+
+    function showWatchlist() {
+        showMessage('Your watchlist is shown in the sidebar when logged in.', 'info');
+    }
+
+    function showSettings() {
+        showMessage('Settings page coming soon!', 'info');
+    }
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        searchTerm = e.target.value;
+        displayData();
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.user-menu')) {
+            document.getElementById('userDropdown').classList.remove('show');
+        }
+    });
+
+    // Close modal on outside click
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('modal-overlay')) {
+            closeModal();
+        }
+    });
+
+    // Initialize application
+    function initApp() {
+        initUser();
+        updateClock();
+        checkMarketStatus();
+        fetchData();
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', initApp);
+
+    // Auto-update intervals
+    setInterval(updateClock, 1000);
+    setInterval(checkMarketStatus, 60000);
+
+    // Auto-refresh during market hours
+    setInterval(() => {
+        const nepal = getNepalTime();
+        const day = nepal.getDay();
+        const hour = nepal.getHours();
+        const isWeekday = [0, 1, 2, 3, 4].includes(day);
+        const isMarketHours = hour >= 11 && hour < 15;
+
+        if (isWeekday && isMarketHours) {
+            fetchData();
+        }
+    }, 30000);
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey || e.metaKey) {
+            switch(e.key) {
+                case 'r':
+                    e.preventDefault();
+                    fetchData();
+                    break;
+                case 'e':
+                    e.preventDefault();
+                    exportData();
+                    break;
+                case 'l':
+                    e.preventDefault();
+                    if (!isLoggedIn) showLogin();
+                    break;
+            }
+        }
+
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+</script>
+</body>
+</html>
